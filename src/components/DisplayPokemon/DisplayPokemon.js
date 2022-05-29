@@ -6,26 +6,36 @@ import "./DisplayPokemon.css"
 
 function DisplayPokemon() {
   const [allPokemons, setAllPokemons] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1)
-  const [postsPerPage, setPostsPerPage] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage, setPostsPerPage] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
   //const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=10')
 
-  const getAllPokemons = async () => {
-    const res = await fetch("https://pokeapi.co/api/v2/pokemon");
+  const changePage = (pageNo) => {
+    console.log('in change page', pageNo);
+    getAllPokemons((pageNo - 1) * 10);
+  }
+
+  const getAllPokemons = async (offset = 0) => {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=10`);
     const data = await res.json();
 
-    //setLoadMore(data.next)
+    console.log('response data', data);
 
-    function createPokemonObject(results) {
-      results.forEach(async (pokemon) => {
-        const res = await fetch(
-          `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
-        );
-        const data = await res.json();
-        setAllPokemons((currentList) => [...currentList, data]);
-      });
+    async function createPokemonObject(results) {
+      const pokemonDetailList = await Promise.all(
+        results.map(async (pokemon) => {
+          const res = await fetch(
+            `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
+          );
+          return await res.json();
+        })
+      );
+      console.log('poke details list', pokemonDetailList);
+      setAllPokemons(pokemonDetailList);
     }
     createPokemonObject(data.results);
+    setTotalCount(data.count);
   };
 
   useEffect(() => {
@@ -33,16 +43,10 @@ function DisplayPokemon() {
     // eslint-disable-next-line
   }, []);
 
-  console.log(allPokemons.length);
-
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = allPokemons.slice(indexOfFirstPost, indexOfLastPost);
-
   return (
     <>
       <div className="cards-container">
-        {currentPosts.map((pokemonStats, index) => (
+        {allPokemons.map((pokemonStats, index) => (
           <PokemonCards
             key={index}
             image={pokemonStats.sprites.other.dream_world.front_default}
@@ -53,10 +57,10 @@ function DisplayPokemon() {
             defense={pokemonStats.stats[2].base_stat}
           />
         ))}
-       
-        
+
+
       </div>
-      <Pagination postsPerPage={postsPerPage} totalPosts={allPokemons.length}/>
+      <Pagination postsPerPage={postsPerPage} totalPosts={totalCount} paginate={changePage} />
     </>
   );
 }
