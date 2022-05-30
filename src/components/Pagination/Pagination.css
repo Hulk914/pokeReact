@@ -1,0 +1,17 @@
+.pagination {
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.pagination span {
+    text-decoration: none;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.pagination .selected {
+    border: 1px solid black;
+}

@@ -6,7 +6,6 @@ import "./DisplayPokemon.css"
 
 function DisplayPokemon() {
   const [allPokemons, setAllPokemons] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   //const [loadMore, setLoadMore] = useState('https://pokeapi.co/api/v2/pokemon?limit=10')
@@ -57,8 +56,6 @@ function DisplayPokemon() {
             defense={pokemonStats.stats[2].base_stat}
           />
         ))}
-
-
       </div>
       <Pagination postsPerPage={postsPerPage} totalPosts={totalCount} paginate={changePage} />
     </>

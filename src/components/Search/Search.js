@@ -69,14 +69,14 @@ function Search({ setView }) {
           </button>
           {err && <h6>{err}</h6>}
         </div>
-        <div className="DisplayPokemon">
+        {/* <div className="DisplayPokemon">
           <h1>{pokemon.name.toUpperCase()}</h1>
           <img src={pokemon.img} alt="" />
           <h4>Type : {pokemon.type}</h4>
           <h4>HP : {pokemon.hp}</h4>
           <h4>Attack : {pokemon.attack}</h4>
           <h4>Defense : {pokemon.defense}</h4>
-        </div>
+        </div> */}
       </div>
     </>
   )
