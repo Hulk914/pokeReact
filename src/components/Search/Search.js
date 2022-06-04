@@ -1,4 +1,5 @@
 import { useState, React } from 'react'
+import { useNavigate } from 'react-router-dom';
 import "./Search.css"
 
 const initialState = {
@@ -10,19 +11,19 @@ const initialState = {
   type: ""
 };
 
-function Search({ setView }) {
+function Search({ selectPokemon }) {
   const [pokemonName, setPokemonName] = useState("");
   const [pokemon, setPokemon] = useState(initialState);
-  //const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState("");
+  const navigate = useNavigate();
 
   const showList = () => {
     setPokemon(initialState);
-    setView("list");
+    selectPokemon(initialState);
+    navigate('/');
   }
 
   const pokemonSearch = async () => {
-    //setIsLoading(true);
     try {
       const response = await fetch(
         `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
@@ -34,17 +35,18 @@ function Search({ setView }) {
 
       const result = await response.json();
 
-      console.log("result is: ", JSON.stringify(result, null, 4));
-
-      setPokemon({
+      const pokemon = {
         name: pokemonName,
         img: result.sprites.other.dream_world.front_default,
         hp: result.stats[0].base_stat,
         attack: result.stats[1].base_stat,
         defense: result.stats[2].base_stat,
         type: result.types[0].type.name
-      });
-      setView('search');
+      };
+
+      setPokemon(pokemon);
+      selectPokemon(pokemon);
+      navigate('/search-result');
     } catch (err) {
       setErr(err.message);
     }
@@ -69,14 +71,6 @@ function Search({ setView }) {
           </button>
           {err && <h6>{err}</h6>}
         </div>
-        {/* <div className="DisplayPokemon">
-          <h1>{pokemon.name.toUpperCase()}</h1>
-          <img src={pokemon.img} alt="" />
-          <h4>Type : {pokemon.type}</h4>
-          <h4>HP : {pokemon.hp}</h4>
-          <h4>Attack : {pokemon.attack}</h4>
-          <h4>Defense : {pokemon.defense}</h4>
-        </div> */}
       </div>
     </>
   )
